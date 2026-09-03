@@ -1,0 +1,66 @@
+{
+  "metadata": {
+    "system": "BMW-JIS-Logistics-Sequence-Orchestrator",
+    "origin_hub": "BMW Group Plant Woodruff Battery Assembly",
+    "destination_hub": "BMW Group Plant Spartanburg (Hall 52)",
+    "corridor_distance_miles": 15.0,
+    "timestamp_utc": "2026-09-03T13:39:16.279317+00:00"
+  },
+  "jis_kpi_dashboard": {
+    "jis_sequence_parity_rate": "99.82%",
+    "hall_52_battery_buffer_stock": "22 Packs (36 Minutes Buffer)",
+    "target_buffer_safety_threshold": "16 Packs",
+    "stoppage_risk_level": "LOW_OPERATIONAL_RISK",
+    "estimated_line_downtime_avoided_annual_usd": "$2,450,000"
+  },
+  "active_shuttle_convoys": [
+    {
+      "convoy_id": "JIS-SHUTTLE-TRUCK-01",
+      "status": "IN_TRANSIT (SC-101 Northbound)",
+      "distance_remaining_miles": 4.2,
+      "transit_eta_minutes": 7.5,
+      "packs_in_sequence": 12,
+      "target_vin_range": "4USX500140 - 4USX500151",
+      "intake_inspection_status": "PRE_CLEARED_RFID",
+      "traffic_delay_delta_sec": 0
+    },
+    {
+      "convoy_id": "JIS-SHUTTLE-TRUCK-02",
+      "status": "LOADING_AT_WOODRUFF",
+      "distance_remaining_miles": 15.0,
+      "transit_eta_minutes": 22.0,
+      "packs_in_sequence": 14,
+      "target_vin_range": "4USX500152 - 4USX500165",
+      "intake_inspection_status": "CELL_TEST_PASSED",
+      "traffic_delay_delta_sec": -45
+    },
+    {
+      "convoy_id": "JIS-SHUTTLE-TRUCK-03",
+      "status": "UNLOADED_AT_HALL_52_BUFFER",
+      "distance_remaining_miles": 0.0,
+      "transit_eta_minutes": 0.0,
+      "packs_in_sequence": 12,
+      "target_vin_range": "4USX500128 - 4USX500139",
+      "intake_inspection_status": "INDEXED_TO_SKID_CONVEYOR",
+      "traffic_delay_delta_sec": 0
+    }
+  ],
+  "woodruff_facility": {
+    "name": "BMW Group Plant Woodruff Battery Assembly",
+    "location": "Woodruff, SC (Hwy 101)",
+    "coordinates": {
+      "lat": 34.739,
+      "lng": -82.036
+    },
+    "role": "High-Voltage 800V Cell-to-Pack Assembly & Testing"
+  },
+  "spartanburg_facility": {
+    "name": "BMW Group Plant Spartanburg (Hall 52)",
+    "location": "Greer, SC (I-85 / SC-101)",
+    "coordinates": {
+      "lat": 34.8931,
+      "lng": -82.1804
+    },
+    "role": "Vehicle Assembly: X3, X4, X5, X6, X7, XM, iX5"
+  }
+}

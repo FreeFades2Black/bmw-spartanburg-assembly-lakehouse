@@ -1,0 +1,130 @@
+{
+  "metadata": {
+    "engine": "BMW-AIQX-Next-Gen-Quality-Kernel",
+    "target_facility": "BMW Group Plant Spartanburg (Hall 52)",
+    "evaluated_chassis_count": 960,
+    "timestamp_utc": "2026-09-03T13:39:16.271651+00:00"
+  },
+  "executive_quality_kpis": {
+    "total_quarantined_at_early_stations": 7,
+    "total_proactive_warning_drifts": 1,
+    "total_first_time_yield_passed": 952,
+    "first_time_yield_pct": 99.17,
+    "annualized_avoided_scrap_teardown_usd": "$1,860,000",
+    "station_50_escape_rate": "0.00% (Zero High-Voltage Defects Escaped to Dyno)"
+  },
+  "station_quarantine_breakdown": {
+    "S01_Chassis_Infeed": 0,
+    "S05_Underbody_Prep": 1,
+    "S12_Battery_Marriage_800V": 7,
+    "S18_Powertrain_Drop": 0,
+    "S24_Exhaust_HV_Cabling": 0,
+    "S32_Interior_Cockpit": 0,
+    "S40_Glazing_Roof": 0,
+    "S50_Final_Dyno_Rolloff": 0
+  },
+  "recent_quarantined_incidents": [
+    {
+      "incident_id": "AIQX-INC-101",
+      "vin": "4USBM671191",
+      "model": "BMW X5",
+      "powertrain_type": "PHEV",
+      "detected_station": "L1_S12_BATTERY_MARRIAGE",
+      "defect_category": "800V_BOLTING_TORQUE_EXCURSION",
+      "measured_metric": "56.88 Nm (Limit: \u00b16.0 Nm)",
+      "early_shunting_cost_usd": 320.0,
+      "avoided_station_50_teardown_cost_usd": 18400.0,
+      "net_cost_avoided_usd": 18080.0,
+      "quarantine_action": "AUTOMATED_BUFFER_SHUNT (Offline Cell Realignment)",
+      "timestamp": "2026-09-03T10:45:49.117159+00:00"
+    },
+    {
+      "incident_id": "AIQX-INC-102",
+      "vin": "4USBM786174",
+      "model": "BMW X5",
+      "powertrain_type": "PHEV",
+      "detected_station": "L1_S12_BATTERY_MARRIAGE",
+      "defect_category": "800V_BOLTING_TORQUE_EXCURSION",
+      "measured_metric": "74.66 Nm (Limit: \u00b16.0 Nm)",
+      "early_shunting_cost_usd": 320.0,
+      "avoided_station_50_teardown_cost_usd": 18400.0,
+      "net_cost_avoided_usd": 18080.0,
+      "quarantine_action": "AUTOMATED_BUFFER_SHUNT (Offline Cell Realignment)",
+      "timestamp": "2026-09-03T10:47:47.117159+00:00"
+    },
+    {
+      "incident_id": "AIQX-INC-103",
+      "vin": "4USBM455744",
+      "model": "BMW X5",
+      "powertrain_type": "PHEV",
+      "detected_station": "L1_S12_BATTERY_MARRIAGE",
+      "defect_category": "800V_BOLTING_TORQUE_EXCURSION",
+      "measured_metric": "56.54 Nm (Limit: \u00b16.0 Nm)",
+      "early_shunting_cost_usd": 320.0,
+      "avoided_station_50_teardown_cost_usd": 18400.0,
+      "net_cost_avoided_usd": 18080.0,
+      "quarantine_action": "AUTOMATED_BUFFER_SHUNT (Offline Cell Realignment)",
+      "timestamp": "2026-09-03T10:48:56.117159+00:00"
+    },
+    {
+      "incident_id": "AIQX-INC-104",
+      "vin": "4USBM938080",
+      "model": "BMW XM (High-Performance PHEV)",
+      "powertrain_type": "PHEV",
+      "detected_station": "L1_S12_BATTERY_MARRIAGE",
+      "defect_category": "800V_BOLTING_TORQUE_EXCURSION",
+      "measured_metric": "73.69 Nm (Limit: \u00b16.0 Nm)",
+      "early_shunting_cost_usd": 320.0,
+      "avoided_station_50_teardown_cost_usd": 18400.0,
+      "net_cost_avoided_usd": 18080.0,
+      "quarantine_action": "AUTOMATED_BUFFER_SHUNT (Offline Cell Realignment)",
+      "timestamp": "2026-09-03T11:09:33.117159+00:00"
+    },
+    {
+      "incident_id": "AIQX-INC-105",
+      "vin": "4USBM312811",
+      "model": "BMW X5",
+      "powertrain_type": "PHEV",
+      "detected_station": "L1_S12_BATTERY_MARRIAGE",
+      "defect_category": "800V_BOLTING_TORQUE_EXCURSION",
+      "measured_metric": "54.18 Nm (Limit: \u00b16.0 Nm)",
+      "early_shunting_cost_usd": 320.0,
+      "avoided_station_50_teardown_cost_usd": 18400.0,
+      "net_cost_avoided_usd": 18080.0,
+      "quarantine_action": "AUTOMATED_BUFFER_SHUNT (Offline Cell Realignment)",
+      "timestamp": "2026-09-03T11:27:09.117159+00:00"
+    },
+    {
+      "incident_id": "AIQX-INC-106",
+      "vin": "4USBM187775",
+      "model": "BMW X5",
+      "powertrain_type": "PHEV",
+      "detected_station": "L1_S12_BATTERY_MARRIAGE",
+      "defect_category": "800V_BOLTING_TORQUE_EXCURSION",
+      "measured_metric": "76.53 Nm (Limit: \u00b16.0 Nm)",
+      "early_shunting_cost_usd": 320.0,
+      "avoided_station_50_teardown_cost_usd": 18400.0,
+      "net_cost_avoided_usd": 18080.0,
+      "quarantine_action": "AUTOMATED_BUFFER_SHUNT (Offline Cell Realignment)",
+      "timestamp": "2026-09-03T11:28:12.117159+00:00"
+    },
+    {
+      "incident_id": "AIQX-INC-107",
+      "vin": "4USBM226205",
+      "model": "BMW X5",
+      "powertrain_type": "PHEV",
+      "detected_station": "L1_S12_BATTERY_MARRIAGE",
+      "defect_category": "800V_BOLTING_TORQUE_EXCURSION",
+      "measured_metric": "57.28 Nm (Limit: \u00b16.0 Nm)",
+      "early_shunting_cost_usd": 320.0,
+      "avoided_station_50_teardown_cost_usd": 18400.0,
+      "net_cost_avoided_usd": 18080.0,
+      "quarantine_action": "AUTOMATED_BUFFER_SHUNT (Offline Cell Realignment)",
+      "timestamp": "2026-09-03T12:14:18.117159+00:00"
+    }
+  ],
+  "quarantine_roi_summary": {
+    "average_savings_per_shunted_chassis_usd": 18080.0,
+    "shunting_mechanism": "Automated Skid Shunt \u2794 Offline Cell-to-Pack Torque Diagnostics Cell"
+  }
+}
