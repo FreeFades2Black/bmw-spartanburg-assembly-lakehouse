@@ -504,6 +504,95 @@ def generate_executive_html(output_dir: str = "docs"):
     </div>
   </section>
 
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!-- 📑 SUMMARY OF FINDINGS & STRATEGIC RECOMMENDATIONS                      -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="max-w-7xl mx-auto px-4 mb-8">
+    <div class="glass-card-amber p-6 rounded-2xl shadow-2xl border border-amber-500/40">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-5 border-b border-amber-900/60 pb-3">
+        <div>
+          <h2 class="text-base md:text-lg font-black text-amber-300 uppercase tracking-wider flex items-center gap-2">
+            <span>📑</span> Summary of Operational Findings &amp; Engineering Recommendations
+          </h2>
+          <p class="text-xs text-amber-100/80">Data-driven conclusions and executive intervention roadmap for BMW Plant Spartanburg (Hall 52 &amp; Woodruff Logistics)</p>
+        </div>
+        <span class="text-xs font-mono text-amber-200 bg-amber-950 px-2.5 py-1 rounded border border-amber-800">EXECUTIVE ROADMAP</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
+        <!-- Findings -->
+        <div class="space-y-3">
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-slate-800 pb-2">
+            <span>🔍</span> Key Analytical Findings (The Data Reality)
+          </h3>
+
+          <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800">
+            <strong class="text-cyan-300 text-xs block mb-1">1. Multi-Powertrain Takt Imbalance (74s BEV vs 32s ICE):</strong>
+            <p class="text-slate-300 leading-relaxed">
+              When sequential infeed clusters contain 3 or more consecutive BEVs (iX5) or heavy PHEVs (XM), Station L1_S12 (Battery Marriage) cycle times spike to 74s (vs 60s nominal line takt), pushing buffer saturation to <strong>91.4%</strong> and creating downstream starvation at Station L1_S18.
+            </p>
+          </div>
+
+          <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800">
+            <strong class="text-rose-300 text-xs block mb-1">2. Exponential Scrap Escalation ($320 at S12 vs $18,400 at S50):</strong>
+            <p class="text-slate-300 leading-relaxed">
+              Cell-to-Pack structural adhesion and 800V bolting defects cannot be reworked once married. Early shunting at Station 12 prevents downstream chassis teardown, delivering <strong>$18,080 in net avoided scrap per incident</strong> ($1.86M annualized).
+            </p>
+          </div>
+
+          <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800">
+            <strong class="text-purple-300 text-xs block mb-1">3. 18.2-Minute Advance Takt Forewarning:</strong>
+            <p class="text-slate-300 leading-relaxed">
+              Google TimesFM-3 foundation model accurately forecasts takt volatility with a <strong>1.73% MAPE</strong> across multi-powertrain batch waves, giving line supervisors an 18.2-minute actionable window before mechanical buffer gridlock occurs.
+            </p>
+          </div>
+
+          <div class="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800">
+            <strong class="text-amber-300 text-xs block mb-1">4. Woodruff 15-Mile JIS Buffer Thresholds:</strong>
+            <p class="text-slate-300 leading-relaxed">
+              A safety buffer of <strong>16 battery packs (26 minutes)</strong> is required to absorb SC-101 traffic variance. Current buffer stock (22 packs / 36 min) maintains <strong>99.82% sequence parity</strong>, avoiding catastrophic $15,000/minute line stoppages.
+            </p>
+          </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="space-y-3">
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2 border-b border-slate-800 pb-2">
+            <span>💡</span> Strategic Engineering Recommendations
+          </h3>
+
+          <div class="bg-slate-900/90 p-3.5 rounded-xl border border-emerald-900/60">
+            <strong class="text-emerald-400 text-xs block mb-1">1. Automated Infeed Powertrain Interleaving:</strong>
+            <p class="text-slate-300 leading-relaxed">
+              Program the MES skid induction scheduler to enforce a <em>Max-2 BEV consecutive limit</em>. Automatically interleave ICE (X7/X5) or low-takt PHEV units to allow Station 12 cycle times to settle without stopping the conveyor.
+            </p>
+          </div>
+
+          <div class="bg-slate-900/90 p-3.5 rounded-xl border border-emerald-900/60">
+            <strong class="text-emerald-400 text-xs block mb-1">2. Closed-Loop AIQX Automated Shunting:</strong>
+            <p class="text-slate-300 leading-relaxed">
+              Integrate PLC automated diverter spurs directly at Station 12 and Station 05. Immediately shunt chassis with spindle torque excursions (&gt;±6.0 Nm) to offline diagnostic cells before body marriage.
+            </p>
+          </div>
+
+          <div class="bg-slate-900/90 p-3.5 rounded-xl border border-emerald-900/60">
+            <strong class="text-emerald-400 text-xs block mb-1">3. Predictive JIS Woodruff Convoy Dispatch:</strong>
+            <p class="text-slate-300 leading-relaxed">
+              Feed SC-101 real-time traffic telemetry and TimesFM-3 forward takt demand into the Woodruff logistics queue to automatically trigger shuttle departures when Hall 52 buffer stock drops below 18 packs.
+            </p>
+          </div>
+
+          <div class="bg-slate-900/90 p-3.5 rounded-xl border border-emerald-900/60">
+            <strong class="text-emerald-400 text-xs block mb-1">4. Databricks Delta Live Tables (DLT) Quality Control:</strong>
+            <p class="text-slate-300 leading-relaxed">
+              Deploy continuous Databricks PySpark streaming with expectation gates (<code>expect_or_quarantine</code>) to stream live financial scrap exposure and takt efficiency metrics to plant leadership dashboards.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- Footer -->
   <footer class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 border-t border-slate-800 pt-6">
     <p>BMW Plant Spartanburg Multi-Powertrain Assembly Lakehouse • Databricks &amp; Delta Lake • Powered by Google TimesFM-3 &amp; AIQX</p>

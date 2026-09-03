@@ -113,6 +113,22 @@ This multi-powertrain mix creates 3 multi-million-dollar operational friction po
 
 ---
 
+## 📑 Summary of Operational Findings & Engineering Recommendations
+
+### 🔍 Key Analytical Findings (The Data Reality)
+1. **Multi-Powertrain Takt Imbalance (74s BEV vs 32s ICE):** Sequential infeed clusters containing $\ge 3$ consecutive BEVs (*iX5*) or heavy PHEVs (*XM*) cause Station `L1_S12` (Battery Marriage) cycle times to spike to 74s (vs 60s nominal line takt), pushing buffer saturation to **91.4%** and creating downstream starvation at Station `L1_S18`.
+2. **Exponential Scrap Cost Escalation ($320 at S12 vs $18,400 at S50):** Cell-to-Pack structural adhesion and 800V bolting defects cannot be reworked once married. Early shunting at Station 12 prevents downstream chassis teardown, delivering **$18,080 in net avoided scrap per incident** ($1.86M annualized).
+3. **18.2-Minute Advance Takt Forewarning:** Google TimesFM-3 foundation model accurately forecasts takt volatility with a **1.73% MAPE** across multi-powertrain batch waves, giving line supervisors an 18.2-minute actionable window before mechanical buffer gridlock occurs.
+4. **Woodruff 15-Mile JIS Buffer Thresholds:** A safety buffer of **16 battery packs (26 minutes)** is required to absorb SC-101 traffic variance. Current buffer stock (22 packs / 36 min) maintains **99.82% sequence parity**, avoiding catastrophic $15,000/minute line stoppages.
+
+### 💡 Strategic Engineering Recommendations
+1. **Automated Infeed Powertrain Interleaving:** Program the MES skid induction scheduler to enforce a *Max-2 BEV consecutive limit*. Automatically interleave ICE (*X7/X5*) or low-takt PHEV units to allow Station 12 cycle times to settle without stopping the conveyor.
+2. **Closed-Loop AIQX Automated Shunting:** Integrate PLC automated diverter spurs directly at Station 12 and Station 05. Immediately shunt chassis with spindle torque excursions ($>\pm 6.0\text{ Nm}$) to offline diagnostic cells before body marriage.
+3. **Predictive JIS Woodruff Convoy Dispatch:** Feed SC-101 real-time traffic telemetry and TimesFM-3 forward takt demand into the Woodruff logistics queue to automatically trigger shuttle departures when Hall 52 buffer stock drops below 18 packs.
+4. **Databricks Delta Live Tables (DLT) Quality Control:** Deploy continuous Databricks PySpark streaming with expectation gates (`expect_or_quarantine`) to stream live financial scrap exposure and takt efficiency metrics to plant leadership dashboards.
+
+---
+
 ## 🚀 Quickstart & Verification
 
 ```bash
