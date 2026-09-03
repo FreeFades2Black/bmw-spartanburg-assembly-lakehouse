@@ -1,11 +1,10 @@
 """
 BMW Plant Spartanburg Multi-Powertrain Assembly & AIQX Lakehouse
-Executive Dashboard Compiler (src/visualization/build_dashboard.py)
+Executive Dashboard Compiler with Interactive What-If Sandbox (src/visualization/build_dashboard.py)
 """
 
 import argparse
 import json
-import math
 import os
 import sys
 from datetime import datetime, timezone
@@ -14,8 +13,6 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
-
-from src.ingestion.models import SPARTANBURG_HALL_52_STATIONS
 
 DATA_DIR = PROJECT_ROOT / "data"
 GOLD_DIR = DATA_DIR / "gold"
@@ -296,6 +293,197 @@ def generate_executive_html(output_dir: str = "docs"):
   </section>
 
   <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <!-- 🧪 INTERACTIVE WHAT-IF SCENARIO SIMULATOR & STRESS-TEST SANDBOX        -->
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
+  <section class="max-w-7xl mx-auto px-4 mb-6">
+    <div class="glass-card-blue p-6 rounded-2xl shadow-2xl border border-cyan-500/40 relative">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-4 border-b border-cyan-900/60 pb-3">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs font-mono font-bold bg-cyan-950 text-cyan-300 px-2.5 py-0.5 rounded-full border border-cyan-700">REAL-TIME OPERATIONAL SIMULATOR</span>
+            <span class="text-xs font-mono text-slate-400">Multi-Powertrain &amp; JIS What-If Engine</span>
+          </div>
+          <h2 class="text-base md:text-xl font-black text-white flex items-center gap-2">
+            <span>🧪</span> Interactive What-If Sandbox: Multi-Powertrain Balancing &amp; JIS Stress Testing
+          </h2>
+          <p class="text-xs text-cyan-200/80 mt-0.5">
+            Adjust production mix ratios, induce Woodruff transit delays, or toggle AIQX early shunting to evaluate line starvation and financial scrap exposure in real-time.
+          </p>
+        </div>
+
+        <!-- Quick Scenario Presets -->
+        <div class="flex items-center gap-2 flex-wrap text-xs font-mono">
+          <span class="text-slate-400 text-[11px]">Presets:</span>
+          <button onclick="applyPreset('baseline')" class="bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-700 px-2.5 py-1 rounded transition text-[11px]">Baseline (15% BEV)</button>
+          <button onclick="applyPreset('ev_surge')" class="bg-purple-950 hover:bg-purple-900 text-purple-300 border border-purple-700 px-2.5 py-1 rounded transition text-[11px]">⚡ High-EV Surge (45% BEV)</button>
+          <button onclick="applyPreset('jis_delay')" class="bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-700 px-2.5 py-1 rounded transition text-[11px]">🚚 Woodruff Delay (+25m)</button>
+          <button onclick="applyPreset('aiqx_off')" class="bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-700 px-2.5 py-1 rounded transition text-[11px]">⚠️ AIQX Off (S50 Teardown)</button>
+        </div>
+      </div>
+
+      <!-- Controls & Impact Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left 6 Columns: Interactive Levers / Sliders -->
+        <div class="lg:col-span-6 space-y-4 bg-slate-950/80 p-4 rounded-xl border border-slate-800">
+          <h3 class="text-xs font-bold text-cyan-300 uppercase tracking-wider flex items-center gap-2 border-b border-slate-800 pb-2">
+            <span>⚙️</span> Operational Levers &amp; Line Parameters
+          </h3>
+
+          <!-- Slider 1: BEV Mix -->
+          <div>
+            <div class="flex justify-between items-center text-xs mb-1">
+              <label class="text-slate-300 font-semibold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-cyan-400"></span> BEV Production Mix (iX5 800V):
+              </label>
+              <span id="lblBevMix" class="font-mono text-cyan-300 font-bold">15%</span>
+            </div>
+            <input id="rngBevMix" type="range" min="0" max="60" value="15" step="5" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400" oninput="runWhatIfSimulation()" />
+            <div class="flex justify-between text-[9px] text-slate-500 font-mono mt-0.5">
+              <span>0% (ICE Only)</span>
+              <span>15% (Nominal)</span>
+              <span>45% (High-Voltage Stress)</span>
+              <span>60% (Max)</span>
+            </div>
+          </div>
+
+          <!-- Slider 2: PHEV Mix -->
+          <div>
+            <div class="flex justify-between items-center text-xs mb-1">
+              <label class="text-slate-300 font-semibold flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-purple-400"></span> PHEV Production Mix (X5/XM Hybrid):
+              </label>
+              <span id="lblPhevMix" class="font-mono text-purple-300 font-bold">60%</span>
+            </div>
+            <input id="rngPhevMix" type="range" min="10" max="80" value="60" step="5" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-400" oninput="runWhatIfSimulation()" />
+            <div class="flex justify-between text-[9px] text-slate-500 font-mono mt-0.5">
+              <span>10%</span>
+              <span>60% (Standard Mix)</span>
+              <span>80%</span>
+            </div>
+          </div>
+
+          <!-- Calculated ICE Mix Display -->
+          <div class="flex justify-between items-center p-2 rounded bg-slate-900/90 border border-slate-800 text-xs">
+            <span class="text-slate-400 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-400"></span> Remaining ICE Mix (X7 / TwinPower):</span>
+            <span id="lblIceMix" class="font-mono text-amber-300 font-bold">25%</span>
+          </div>
+
+          <!-- Slider 3: Woodruff JIS Transit Delay -->
+          <div>
+            <div class="flex justify-between items-center text-xs mb-1">
+              <label class="text-slate-300 font-semibold flex items-center gap-1.5">
+                <span>🚚</span> Woodruff 15-Mile Transit Delay (SC-101 Traffic):
+              </label>
+              <span id="lblJisDelay" class="font-mono text-amber-300 font-bold">0 Minutes</span>
+            </div>
+            <input id="rngJisDelay" type="range" min="0" max="45" value="0" step="3" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-400" oninput="runWhatIfSimulation()" />
+            <div class="flex justify-between text-[9px] text-slate-500 font-mono mt-0.5">
+              <span>0m (Clear)</span>
+              <span>15m (Moderate Delay)</span>
+              <span>30m (Buffer Depleted)</span>
+              <span>45m (Stoppage)</span>
+            </div>
+          </div>
+
+          <!-- Slider 4: AIQX Defect Drift Rate -->
+          <div>
+            <div class="flex justify-between items-center text-xs mb-1">
+              <label class="text-slate-300 font-semibold flex items-center gap-1.5">
+                <span>🛡️</span> Station 12 Spindle Torque &amp; Adhesive Drift Rate:
+              </label>
+              <span id="lblDriftRate" class="font-mono text-rose-300 font-bold">4.0%</span>
+            </div>
+            <input id="rngDriftRate" type="range" min="0" max="15" value="4" step="1" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-rose-400" oninput="runWhatIfSimulation()" />
+            <div class="flex justify-between text-[9px] text-slate-500 font-mono mt-0.5">
+              <span>0% (Zero Drift)</span>
+              <span>4% (Baseline)</span>
+              <span>10% (Tooling Wear)</span>
+              <span>15% (Critical)</span>
+            </div>
+          </div>
+
+          <!-- Toggles: AIQX Shunting & Infeed Pacing -->
+          <div class="grid grid-cols-2 gap-3 pt-1">
+            <div class="bg-slate-900/90 p-2.5 rounded border border-slate-800">
+              <label class="text-[11px] text-slate-300 font-semibold block mb-1">AIQX Quarantine Mode:</label>
+              <select id="selAiqxMode" class="w-full bg-slate-950 text-xs text-white border border-slate-700 rounded p-1.5 font-mono" onchange="runWhatIfSimulation()">
+                <option value="early_shunt">Active (Station 12 Shunt @ $320)</option>
+                <option value="legacy_teardown">Disabled (Station 50 Teardown @ $18,400)</option>
+              </select>
+            </div>
+            <div class="bg-slate-900/90 p-2.5 rounded border border-slate-800">
+              <label class="text-[11px] text-slate-300 font-semibold block mb-1">Infeed Pacing Policy:</label>
+              <select id="selInfeedPolicy" class="w-full bg-slate-950 text-xs text-white border border-slate-700 rounded p-1.5 font-mono" onchange="runWhatIfSimulation()">
+                <option value="dynamic_interleaving">Dynamic Interleaving (Max 2 BEVs)</option>
+                <option value="unrestricted_batches">Unrestricted (Random Batching)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right 6 Columns: Simulated Real-Time Impact Gauges -->
+        <div class="lg:col-span-6 space-y-4">
+          <h3 class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-2 border-b border-slate-800 pb-2">
+            <span>📊</span> Simulated Assembly Line Outcomes &amp; Financial Risk
+          </h3>
+
+          <!-- Gauge 1: Weighted Station 12 Cycle Time -->
+          <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs text-slate-400 font-semibold">Predicted S12 Cycle Time (Battery Marriage):</span>
+              <span id="simTaktBadge" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded border bg-emerald-950 text-emerald-300 border-emerald-800">OPTIMAL</span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span id="simCycleTime" class="text-3xl font-black text-white">61.4s</span>
+              <span class="text-xs text-slate-400">/ 60.0s Nominal Line Takt</span>
+              <span id="simCycleDelta" class="text-xs font-mono font-bold text-emerald-400">(+1.4s delta)</span>
+            </div>
+            <div class="w-full bg-slate-800 h-2 rounded-full mt-2 overflow-hidden">
+              <div id="simCycleBar" class="bg-emerald-500 h-full rounded-full transition-all duration-300" style="width: 55%;"></div>
+            </div>
+            <div class="flex justify-between text-[9px] font-mono text-slate-500 mt-1">
+              <span>32s (ICE Bypass)</span>
+              <span>60s (Nominal Line Takt)</span>
+              <span>75s (Buffer Ceiling)</span>
+            </div>
+          </div>
+
+          <!-- Gauge 2: Hall 52 JIS Buffer Reserve & Stoppage Risk -->
+          <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs text-slate-400 font-semibold">Hall 52 Battery Buffer &amp; Line Stoppage Risk:</span>
+              <span id="simBufferBadge" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded border bg-emerald-950 text-emerald-300 border-emerald-800">SAFE (22 Packs)</span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span id="simBufferMinutes" class="text-3xl font-black text-emerald-400">36.0 Min</span>
+              <span class="text-xs text-slate-400">Operating Runway</span>
+              <span id="simStoppageCost" class="text-xs font-mono font-bold text-emerald-400">($0/min downtime)</span>
+            </div>
+            <p id="simBufferNarrative" class="text-[11px] text-slate-300 mt-1.5 leading-snug">
+              Buffer stock safely exceeds the 16-pack minimum threshold. Zero risk of conveyor starvation.
+            </p>
+          </div>
+
+          <!-- Gauge 3: Annual Scrap & Teardown Cost -->
+          <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs text-slate-400 font-semibold">Projected Annual Scrap &amp; Teardown Exposure:</span>
+              <span id="simScrapBadge" class="text-[10px] font-mono font-bold px-2 py-0.5 rounded border bg-emerald-950 text-emerald-300 border-emerald-800">AIQX PROTECTED</span>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <span id="simAnnualScrap" class="text-3xl font-black text-white">$142,000</span>
+              <span id="simScrapSavings" class="text-xs font-mono font-bold text-emerald-400">(Saves $1.86M via early shunting)</span>
+            </div>
+            <p id="simScrapNarrative" class="text-[11px] text-slate-300 mt-1.5 leading-snug">
+              Out-of-spec bolting excursions are shunted at Station 12 for $320 each, avoiding $18,400 full vehicle teardowns at Station 50.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════ -->
   <!-- 🏎️ LIVE MULTI-POWERTRAIN CHASSIS FLOW CONVEYOR (HALL 52)                -->
   <!-- ═══════════════════════════════════════════════════════════════════════ -->
   <section class="max-w-7xl mx-auto px-4 glass-card p-5 rounded-2xl mb-6 shadow-2xl">
@@ -309,7 +497,7 @@ def generate_executive_html(output_dir: str = "docs"):
       <span class="text-xs font-mono text-cyan-300 bg-cyan-950 px-2.5 py-1 rounded border border-cyan-800">AUTOMATED SKID INFEED</span>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
+    <div id="conveyorGrid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
 """
 
     for c in chassis_sequence:
@@ -600,18 +788,168 @@ def generate_executive_html(output_dir: str = "docs"):
   </footer>
 
   <script>
-    // 1. Initialize Map for 15-Mile Plant Woodruff to Spartanburg JIS Corridor
+    // ═══════════════════════════════════════════════════════════════════════
+    // 1. WHAT-IF OPERATIONAL SIMULATION & SCENARIO ENGINE
+    // ═══════════════════════════════════════════════════════════════════════
+    function runWhatIfSimulation() {{
+      const bevMix = parseInt(document.getElementById('rngBevMix').value) || 0;
+      const phevMix = parseInt(document.getElementById('rngPhevMix').value) || 0;
+      const jisDelay = parseInt(document.getElementById('rngJisDelay').value) || 0;
+      const driftRate = parseFloat(document.getElementById('rngDriftRate').value) || 0;
+      const aiqxMode = document.getElementById('selAiqxMode').value;
+      const infeedPolicy = document.getElementById('selInfeedPolicy').value;
+
+      // Update slider labels
+      document.getElementById('lblBevMix').textContent = `${{bevMix}}%`;
+      document.getElementById('lblPhevMix').textContent = `${{phevMix}}%`;
+      const iceMix = Math.max(0, 100 - bevMix - phevMix);
+      document.getElementById('lblIceMix').textContent = `${{iceMix}}%`;
+      document.getElementById('lblJisDelay').textContent = `${{jisDelay}} Minutes`;
+      document.getElementById('lblDriftRate').textContent = `${{driftRate.toFixed(1)}}%`;
+
+      // 1. Calculate Weighted Station 12 Cycle Time
+      let baseCycle = (iceMix / 100 * 32.0) + (phevMix / 100 * 64.0) + (bevMix / 100 * 74.0);
+      if (infeedPolicy === 'unrestricted_batches' && bevMix > 30) {{
+        baseCycle += 4.5; // Batch clustering penalty
+      }}
+      const cycleTime = Number(baseCycle.toFixed(1));
+      const delta = Number((cycleTime - 60.0).toFixed(1));
+
+      document.getElementById('simCycleTime').textContent = `${{cycleTime}}s`;
+      const deltaEl = document.getElementById('simCycleDelta');
+      deltaEl.textContent = `(${{delta >= 0 ? '+' : ''}}${{delta}}s delta)`;
+      
+      const badgeEl = document.getElementById('simTaktBadge');
+      const barEl = document.getElementById('simCycleBar');
+      const barPct = Math.min(100, Math.max(10, ((cycleTime - 32) / (78 - 32)) * 100));
+      barEl.style.width = `${{barPct}}%`;
+
+      if (cycleTime > 70.0) {{
+        badgeEl.textContent = 'BOTTLENECK CRITICAL (>70s)';
+        badgeEl.className = 'text-[10px] font-mono font-bold px-2 py-0.5 rounded border bg-rose-950 text-rose-300 border-rose-800';
+        deltaEl.className = 'text-xs font-mono font-bold text-rose-400';
+        barEl.className = 'bg-rose-500 h-full rounded-full transition-all duration-300';
+      }} else if (cycleTime > 62.0) {{
+        badgeEl.textContent = 'BUFFER STRESS (62-70s)';
+        badgeEl.className = 'text-[10px] font-mono font-bold px-2 py-0.5 rounded border bg-amber-950 text-amber-300 border-amber-800';
+        deltaEl.className = 'text-xs font-mono font-bold text-amber-400';
+        barEl.className = 'bg-amber-500 h-full rounded-full transition-all duration-300';
+      }} else {{
+        badgeEl.textContent = 'OPTIMAL (<62s)';
+        badgeEl.className = 'text-[10px] font-mono font-bold px-2 py-0.5 rounded border bg-emerald-950 text-emerald-300 border-emerald-800';
+        deltaEl.className = 'text-xs font-mono font-bold text-emerald-400';
+        barEl.className = 'bg-emerald-500 h-full rounded-full transition-all duration-300';
+      }}
+
+      // 2. Calculate JIS Buffer Depletion & Line Stoppage Risk
+      const initialBuffer = 22;
+      const consumedPacks = Math.round((jisDelay / 22.0) * 14);
+      const remainingPacks = Math.max(0, initialBuffer - consumedPacks);
+      const runwayMinutes = Number((remainingPacks * 1.63).toFixed(1));
+
+      const bufferBadge = document.getElementById('simBufferBadge');
+      const bufferMinutesEl = document.getElementById('simBufferMinutes');
+      const stoppageCostEl = document.getElementById('simStoppageCost');
+      const bufferNarrative = document.getElementById('simBufferNarrative');
+
+      bufferMinutesEl.textContent = `${{runwayMinutes}} Min`;
+
+      if (remainingPacks <= 0) {{
+        bufferBadge.textContent = '🚨 BUFFER EXHAUSTED (0 Packs)';
+        bufferBadge.className = 'text-[10px] font-mono font-bold px-2 py-0.5 rounded border bg-rose-950 text-rose-300 border-rose-800 animate-pulse';
+        bufferMinutesEl.className = 'text-3xl font-black text-rose-400';
+        stoppageCostEl.textContent = '($15,000/MIN DOWNTIME ACTIVE!)';
+        stoppageCostEl.className = 'text-xs font-mono font-bold text-rose-400';
+        bufferNarrative.innerHTML = '<strong class="text-rose-400">CRITICAL:</strong> Woodruff shuttle delayed over 34 minutes. Hall 52 battery buffer empty. Main conveyor halted.';
+      }} else if (remainingPacks < 16) {{
+        bufferBadge.textContent = `⚠️ BUFFER AT RISK (${{remainingPacks}} Packs)`;
+        bufferBadge.className = 'text-[10px] font-mono font-bold px-2 py-0.5 rounded border bg-amber-950 text-amber-300 border-amber-800';
+        bufferMinutesEl.className = 'text-3xl font-black text-amber-400';
+        stoppageCostEl.textContent = '($0/min - Approaching 16-Pack Minimum)';
+        stoppageCostEl.className = 'text-xs font-mono font-bold text-amber-400';
+        bufferNarrative.innerHTML = '<strong class="text-amber-400">WARNING:</strong> Traffic delay consuming safety buffer. Expedited Woodruff police escort recommended.';
+      }} else {{
+        bufferBadge.textContent = `SAFE (${{remainingPacks}} Packs)`;
+        bufferBadge.className = 'text-[10px] font-mono font-bold px-2 py-0.5 rounded border bg-emerald-950 text-emerald-300 border-emerald-800';
+        bufferMinutesEl.className = 'text-3xl font-black text-emerald-400';
+        stoppageCostEl.textContent = '($0/min downtime)';
+        stoppageCostEl.className = 'text-xs font-mono font-bold text-emerald-400';
+        bufferNarrative.textContent = 'Buffer stock safely exceeds the 16-pack minimum threshold. Zero risk of conveyor starvation.';
+      }}
+
+      // 3. Calculate Projected Annual Scrap Exposure
+      const annualDefectChassis = Math.round((driftRate / 100) * 4000); // 400k annual volume * 1% sampling
+      let annualScrapUsd = 0;
+      let annualSavingsUsd = 0;
+
+      if (aiqxMode === 'early_shunt') {{
+        annualScrapUsd = annualDefectChassis * 320;
+        annualSavingsUsd = (annualDefectChassis * 18400) - annualScrapUsd;
+        document.getElementById('simScrapBadge').textContent = 'AIQX PROTECTED';
+        document.getElementById('simScrapBadge').className = 'text-[10px] font-mono font-bold px-2 py-0.5 rounded border bg-emerald-950 text-emerald-300 border-emerald-800';
+        document.getElementById('simAnnualScrap').textContent = `$${{annualScrapUsd.toLocaleString()}}`;
+        document.getElementById('simAnnualScrap').className = 'text-3xl font-black text-white';
+        document.getElementById('simScrapSavings').textContent = `(Saves $${{(annualSavingsUsd/1000000).toFixed(2)}}M via early shunting)`;
+        document.getElementById('simScrapSavings').className = 'text-xs font-mono font-bold text-emerald-400';
+        document.getElementById('simScrapNarrative').textContent = 'Out-of-spec bolting excursions are shunted at Station 12 for $320 each, avoiding $18,400 full vehicle teardowns at Station 50.';
+      }} else {{
+        annualScrapUsd = annualDefectChassis * 18400;
+        document.getElementById('simScrapBadge').textContent = '⚠️ UNPROTECTED TEARDOWN EXPOSURE';
+        document.getElementById('simScrapBadge').className = 'text-[10px] font-mono font-bold px-2 py-0.5 rounded border bg-rose-950 text-rose-300 border-rose-800 animate-pulse';
+        document.getElementById('simAnnualScrap').textContent = `$${{annualScrapUsd.toLocaleString()}}`;
+        document.getElementById('simAnnualScrap').className = 'text-3xl font-black text-rose-400';
+        document.getElementById('simScrapSavings').textContent = `(+$${{(annualScrapUsd/1000000).toFixed(2)}}M Unmitigated Waste)`;
+        document.getElementById('simScrapSavings').className = 'text-xs font-mono font-bold text-rose-400';
+        document.getElementById('simScrapNarrative').innerHTML = '<strong class="text-rose-400">CRITICAL:</strong> AIQX disabled. Defects travel undetected to Station 50 dyno, forcing destructive full-body manual teardown.';
+      }}
+    }}
+
+    function applyPreset(type) {{
+      if (type === 'baseline') {{
+        document.getElementById('rngBevMix').value = 15;
+        document.getElementById('rngPhevMix').value = 60;
+        document.getElementById('rngJisDelay').value = 0;
+        document.getElementById('rngDriftRate').value = 4;
+        document.getElementById('selAiqxMode').value = 'early_shunt';
+        document.getElementById('selInfeedPolicy').value = 'dynamic_interleaving';
+      }} else if (type === 'ev_surge') {{
+        document.getElementById('rngBevMix').value = 45;
+        document.getElementById('rngPhevMix').value = 40;
+        document.getElementById('rngJisDelay').value = 0;
+        document.getElementById('rngDriftRate').value = 5;
+        document.getElementById('selAiqxMode').value = 'early_shunt';
+        document.getElementById('selInfeedPolicy').value = 'dynamic_interleaving';
+      }} else if (type === 'jis_delay') {{
+        document.getElementById('rngBevMix').value = 25;
+        document.getElementById('rngPhevMix').value = 55;
+        document.getElementById('rngJisDelay').value = 28;
+        document.getElementById('rngDriftRate').value = 4;
+        document.getElementById('selAiqxMode').value = 'early_shunt';
+        document.getElementById('selInfeedPolicy').value = 'dynamic_interleaving';
+      }} else if (type === 'aiqx_off') {{
+        document.getElementById('rngBevMix').value = 20;
+        document.getElementById('rngPhevMix').value = 55;
+        document.getElementById('rngJisDelay').value = 0;
+        document.getElementById('rngDriftRate').value = 8;
+        document.getElementById('selAiqxMode').value = 'legacy_teardown';
+        document.getElementById('selInfeedPolicy').value = 'unrestricted_batches';
+      }}
+      runWhatIfSimulation();
+    }}
+
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 2. GEOSPATIAL MAP & ROUTE (WOODRUFF TO SPARTANBURG)
+    // ═══════════════════════════════════════════════════════════════════════
     const map = L.map('jisMap').setView([34.815, -82.11], 11);
     L.tileLayer('https://tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
       maxZoom: 19,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }}).addTo(map);
 
-    // Locations
     const woodruff = [34.7390, -82.0360];
     const spartanburg = [34.8931, -82.1804];
 
-    // Markers
     const mWoodruff = L.circleMarker(woodruff, {{
       radius: 12,
       color: '#06b6d4',
@@ -642,7 +980,6 @@ def generate_executive_html(output_dir: str = "docs"):
       </div>
     `, {{ direction: 'top', opacity: 0.95 }});
 
-    // 15-Mile Transit Line
     const jisLine = L.polyline([woodruff, [34.81, -82.10], spartanburg], {{
       color: '#38bdf8',
       weight: 3.5,
@@ -651,7 +988,6 @@ def generate_executive_html(output_dir: str = "docs"):
     }}).addTo(map);
     jisLine.bindTooltip("15-Mile Just-In-Sequence Battery Shuttle Corridor (SC-101 / I-85)", {{ sticky: true }});
 
-    // Active Shuttle Truck Marker
     const truckMarker = L.circleMarker([34.825, -82.115], {{
       radius: 9,
       color: '#a855f7',
@@ -668,7 +1004,9 @@ def generate_executive_html(output_dir: str = "docs"):
     `, {{ direction: 'top', permanent: true, opacity: 0.9 }});
 
 
-    // 2. Initialize TimesFM-3 Takt Time Forecaster Chart
+    // ═══════════════════════════════════════════════════════════════════════
+    // 3. TIMESFM-3 TAKT TIME FORECASTER CHART
+    // ═══════════════════════════════════════════════════════════════════════
     const timeLabels = [];
     const actuals = [];
     const p50 = [];
@@ -797,6 +1135,9 @@ def generate_executive_html(output_dir: str = "docs"):
       a.download = `bmw_spartanburg_assembly_advisory_${{new Date().toISOString().substring(0,10)}}.csv`;
       a.click();
     }}
+
+    // Run initial simulation calculation
+    runWhatIfSimulation();
   </script>
 </body>
 </html>"""
@@ -809,7 +1150,7 @@ def generate_executive_html(output_dir: str = "docs"):
     with open(dist_file, "w", encoding="utf-8") as f:
         f.write(html_content)
 
-    print(f"Generated BMW Spartanburg Executive Dashboard: {doc_file} and {dist_file}")
+    print(f"Generated BMW Spartanburg Executive Dashboard with What-If Simulator: {doc_file} and {dist_file}")
 
 
 if __name__ == "__main__":
