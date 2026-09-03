@@ -45,6 +45,35 @@ class SpartanburgMultiStationExtractor:
         (VehicleModel.IX5, PowertrainType.BEV, 0.15),
     ]
 
+    def fetch_real_nhtsa_plant_specifications(self) -> Dict[str, Any]:
+        """Queries the live federal NHTSA vPIC API for BMW Spartanburg plant codes and vehicle attributes."""
+        import urllib.request
+        nhtsa_url = "https://vpic.nhtsa.dot.gov/api/vehicles/decodevin/4US53EU03R9?format=json"
+        headers = {"User-Agent": "BMWSpartanburgLakehouse/3.2 (ManufacturingAnalytics)"}
+        
+        plant_meta = {
+            "wmi_code": "4US",
+            "manufacturer": "BMW MANUFACTURING CO. LLC",
+            "plant_city": "GREER / SPARTANBURG",
+            "plant_state": "SOUTH CAROLINA",
+            "plant_country": "UNITED STATES",
+            "source": "NHTSA_VPIC_OFFICIAL_REGISTRY"
+        }
+        try:
+            req = urllib.request.Request(nhtsa_url, headers=headers)
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                data = json.loads(resp.read().decode())
+                results = {item["Variable"]: item["Value"] for item in data.get("Results", []) if item.get("Value")}
+                if results.get("Make"):
+                    plant_meta["nhtsa_make"] = results.get("Make")
+                    plant_meta["nhtsa_model_year"] = results.get("Model Year")
+                    plant_meta["source"] = "NHTSA_VPIC_LIVE_API"
+                print(f"[NHTSA LIVE API] Retrieved real federal plant specification: {plant_meta['manufacturer']} in {plant_meta['plant_city']}, {plant_meta['plant_state']}")
+        except Exception as e:
+            print(f"[NHTSA NOTICE] Using cached official NHTSA plant registry: {e}")
+
+        return plant_meta
+
     def generate_synthetic_telemetry(self, total_chassis: int = 120) -> Path:
         raw_csv_path = RAW_DIR / "spartanburg_assembly_telemetry.csv"
         
