@@ -1,0 +1,17 @@
+services:
+  bmw-assembly-lakehouse:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: freefades2black/bmw-spartanburg-assembly-lakehouse:latest
+    container_name: bmw-spartanburg-assembly-lakehouse
+    restart: unless-stopped
+    ports:
+      - "8830:8830"
+    environment:
+      - PORT=8830
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8830/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
