@@ -1,0 +1,22 @@
+groups:
+  - name: spartanburg_assembly_alerts
+    rules:
+      - alert: TaktTimeThresholdBreached
+        expr: spartanburg_takt_time_seconds > 65.0
+        for: 2m
+        labels:
+          severity: critical
+          tier: manufacturing
+        annotations:
+          summary: "Takt time exceeded 65s in Assembly Cell {{ $labels.cell_id }}"
+          description: "Assembly line bottleneck detected. Risk of plant line halt."
+
+      - alert: JISSequenceSkewDetected
+        expr: jis_supplier_sequence_skew_slots > 2
+        for: 1m
+        labels:
+          severity: critical
+          tier: supply-chain
+        annotations:
+          summary: "JIS component delivery out of sequence"
+          description: "Downstream parts supplier sequence does not match physical chassis order."

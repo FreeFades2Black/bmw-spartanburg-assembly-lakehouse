@@ -1,0 +1,70 @@
+{
+  "title": "Spartanburg Assembly Plant 10 Golden Signals",
+  "schemaVersion": 38,
+  "panels": [
+    {
+      "title": "Assembly Takt Time Adherence (%)",
+      "type": "gauge",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "avg(spartanburg_takt_time_adherence_ratio) * 100",
+          "legendFormat": "% On-Takt"
+        }
+      ]
+    },
+    {
+      "title": "AIQX Defect Quarantines / Shift",
+      "type": "stat",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "targets": [
+        {
+          "expr": "sum(aiqx_quarantine_events_total)",
+          "legendFormat": "Shunted Chassis"
+        }
+      ]
+    },
+    {
+      "title": "JIS Logistics Sequence Lag (slots)",
+      "type": "stat",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "targets": [
+        {
+          "expr": "max(jis_supplier_sequence_skew_slots)",
+          "legendFormat": "Sequence Skew"
+        }
+      ]
+    },
+    {
+      "title": "Delta Lake ACID Ingestion Latency (s)",
+      "type": "timeseries",
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "targets": [
+        {
+          "expr": "rate(delta_commit_duration_seconds_sum[5m]) / rate(delta_commit_duration_seconds_count[5m])",
+          "legendFormat": "Commit Duration"
+        }
+      ]
+    }
+  ]
+}
