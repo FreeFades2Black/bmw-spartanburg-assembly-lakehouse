@@ -17,7 +17,7 @@ flowchart TD
     end
 
     subgraph EdgeDecision ["2. Real-Time Shunt & Quarantine"]
-        Edge -->|Inference < 20ms| Shunt{"Defect Detected?"}
+        Edge -->|"Inference < 20ms"| Shunt{"Defect Detected?"}
         Shunt -->|Yes| Pneumatic["Pneumatic Defect Shunt Lane<br/>(Physical Vehicle Divert)"]
         Shunt -->|No| Conveyor["Main Line Conveyor<br/>(Chassis Marriage Cell)"]
     end
